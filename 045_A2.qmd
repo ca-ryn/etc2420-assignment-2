@@ -7,7 +7,6 @@ editor: visual
 ## Appendix
 
 Group number: 045 Members: Arella, Christy, Caryn
-test
 
 ### Link to Teams
 
