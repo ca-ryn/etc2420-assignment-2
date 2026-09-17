@@ -1,0 +1,48 @@
+---
+title: "assignment 2 report"
+format: html
+editor: visual
+---
+
+## Appendix
+
+Group number: 045 Members: Arella, Christy, Caryn
+
+### Link to Teams
+
+This is [the link](https://teams.cloud.microsoft/l/channel/19%3AtP-9nxkuQ1emSLMRqaIJQbAS6IoZxVbeCUEZpTakdwE1%40thread.tacv2/Group%20045?groupId=c23c01ef-ac20-4ecd-9f22-89f700daf8c0&tenantId=ef7a487a-77ca-410a-803d-e426b62a587f&ngc=true) to our Teams page so that you can see we contributed equally to the project.
+
+### Task allocation
+
+| Task | Analysts | Reviewers | Target completion date |
+|----|----|----|----|
+| Task 1 |  |  |  |
+| Task 2 |  |  |  |
+| Task 3 |  |  |  |
+| Task 4 |  |  |  |
+| Final merging, formatting, & reproducibility check |  |  |  |
+
+### Meeting schedule
+
+-   Meeting 1
+    -   Date/Time/Venue
+    -   Purpose/Goals for this meeting
+
+### Contribution summary
+
+| Member name | Specific tasks performed | Hours contributed (approx.) |
+|-------------|--------------------------|-----------------------------|
+| Arella      |                          |                             |
+| Christy     |                          |                             |
+| Caryn       |                          |                             |
+
+### Cross-review table
+
+| Task   | Reviewed by (name of primary Reviewer) | Key feedback provided |
+|--------|----------------------------------------|-----------------------|
+| Task 1 |                                        |                       |
+| Task 2 |                                        |                       |
+| Task 3 |                                        |                       |
+| Task 4 |                                        |                       |
+
+## Task 1
