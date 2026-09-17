@@ -7,6 +7,7 @@ editor: visual
 ## Appendix
 
 Group number: 045 Members: Arella, Christy, Caryn
+test
 
 ### Link to Teams
 
@@ -24,9 +25,9 @@ This is [the link](https://teams.cloud.microsoft/l/channel/19%3AtP-9nxkuQ1emSLMR
 
 ### Meeting schedule
 
--   Meeting 1
-    -   Date/Time/Venue
-    -   Purpose/Goals for this meeting
+- Meeting 1
+  - Date/Time/Venue
+  - Purpose/Goals for this meeting
 
 ### Contribution summary
 
