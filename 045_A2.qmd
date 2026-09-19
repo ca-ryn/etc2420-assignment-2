@@ -16,11 +16,11 @@ This is [the link](https://teams.cloud.microsoft/l/channel/19%3AtP-9nxkuQ1emSLMR
 
 | Task | Analysts | Reviewers | Target completion date |
 |----|----|----|----|
-| Task 1 |  |  |  |
-| Task 2 |  |  |  |
-| Task 3 |  |  |  |
-| Task 4 |  |  |  |
-| Final merging, formatting, & reproducibility check |  |  |  |
+| Task 1 |  Christy | Caryn, Arella  | 2nd Oct |
+| Task 2 | Caryn | Christy, Arella | 2nd Oct |
+| Task 3 | Arella | Caryn, Arella | 10th Oct |
+| Task 4 | Arella, Christy, Arella |  |  |
+| Final merging, formatting, & reproducibility check | Caryn | Arella, Christy  |  |
 
 ### Meeting schedule
 
