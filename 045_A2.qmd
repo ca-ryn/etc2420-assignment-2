@@ -15,7 +15,7 @@ This is [the link](https://teams.cloud.microsoft/l/channel/19%3AtP-9nxkuQ1emSLMR
 ### Task allocation
 
 | Task | Analysts | Reviewers | Target completion date |
-|----|----|----|----|
+|------------------|------------------|------------------|------------------|
 | Task 1 | Christy | Caryn, Arella | 2nd Oct |
 | Task 2 | Caryn | Christy, Arella | 2nd Oct |
 | Task 3 | Arella | Caryn, Arella | 10th Oct |
@@ -25,8 +25,11 @@ This is [the link](https://teams.cloud.microsoft/l/channel/19%3AtP-9nxkuQ1emSLMR
 ### Meeting schedule
 
 -   Meeting 1
-    -   Date/Time/Venue
-    -   Purpose/Goals for this meeting
+    -   19 Sept 2026/18:20-18:45/Online on Teams
+    -   Allocate Tasks 1 to 4 to everyone
+    -   Plan out the estimated deadline for each task
+    -   Decide which platform to share our Quarto files to
+    -   Plan out when to have our next meeting
 
 ### Contribution summary
 
