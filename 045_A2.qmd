@@ -37,7 +37,7 @@ This is [the link](https://teams.cloud.microsoft/l/channel/19%3AtP-9nxkuQ1emSLMR
 |-------------|--------------------------|-----------------------------|
 | Arella      |                          |                             |
 | Christy     |                          |                             |
-| Caryn       |                          |                             |
+| Caryn       | Built a violin plot overlaid with a box plot comparing the full budget distributions of Franchise vs. Original films; implemented bootstrap to estimate the sampling distribution of the difference in median budget between two groups; calculated aggregated share of total budget & total revenue, per-film median revenue & median ROI by group |                             |
 
 ### Cross-review table
 
