@@ -19,8 +19,8 @@ This is [the link](https://teams.cloud.microsoft/l/channel/19%3AtP-9nxkuQ1emSLMR
 | Task 1 | Christy | Caryn, Arella | 2nd Oct |
 | Task 2 | Caryn | Christy, Arella | 2nd Oct |
 | Task 3 | Arella | Caryn, Arella | 10th Oct |
-| Task 4 | Arella, Christy, Arella |  |  |
-| Final merging, formatting, & reproducibility check | Caryn | Arella, Christy |  |
+| Task 4 | Arella, Christy, Caryn | Arella, Christy, Caryn | 21st Oct |
+| Final merging, formatting, & reproducibility check | Caryn | Arella, Christy | 22nd Oct |
 
 ### Meeting schedule
 
@@ -30,19 +30,24 @@ This is [the link](https://teams.cloud.microsoft/l/channel/19%3AtP-9nxkuQ1emSLMR
     -   Plan out the estimated deadline for each task
     -   Decide which platform to share our Quarto files to
     -   Plan out when to have our next meeting
-- Meeting 2
-  - 1 Oct 2026/15:00-15:45/Learning & Teaching Building
-  - Go through important findings in Tasks 1 and 2
-  - Decide the better option to finalise our PDF submission
-  - Update contribution summary and cross-review tables in Appendix
+-   Meeting 2
+    -   1 Oct 2026/15:00-15:45/Learning & Teaching Building
+    -   Go through important findings in Tasks 1 and 2
+    -   Decide the better option to finalise our PDF submission
+    -   Update contribution summary in Appendix
+-   Meeting 3
+    -   16 Oct 2026/17:00-17:20/Online on Teams
+    -   Discuss findings from Task 3 + Task 4 a & b
+    -   Decide on the deadlines for each subtask in Task 4
+    -   Plan out when to fill out everything on the appendix
 
 ### Contribution summary
 
 | Member name | Specific tasks performed | Hours contributed (approx.) |
-|-------------|--------------------------|-----------------------------|
-| Arella      |                          |                             |
-| Christy     |                          |                             |
-| Caryn       | Built a violin plot overlaid with a box plot comparing the full budget distributions of Franchise vs. Original films; implemented bootstrap to estimate the sampling distribution of the difference in median budget between two groups; calculated aggregated share of total budget & total revenue, per-film median revenue & median ROI by group |                             |
+|------------------|--------------------------|----------------------------|
+| Arella |  |  |
+| Christy |  |  |
+| Caryn | Built a violin plot overlaid with a box plot comparing the full budget distributions of Franchise vs. Original films; implemented bootstrap to estimate the sampling distribution of the difference in median budget between two groups; calculated aggregated share of total budget & total revenue, per-film median revenue & median ROI by group |  |
 
 ### Cross-review table
 
