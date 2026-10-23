@@ -1,12 +1,21 @@
 ---
-title: "assignment 2 report"
-format: html
-editor: visual
+title: "ETC2420/5242 Assignment 2 Report"
+format:
+  html: default
+  pdf:
+    toc: true
+    geometry:
+      - margin = 1.5cm
+execute:
+  warning: false
+  message: false
 ---
 
 ## Appendix
 
-Group number: 045 Members: Arella, Christy, Caryn
+Group number: 045
+
+Members: Arella, Christy, Caryn
 
 ### Link to Teams
 
@@ -24,38 +33,295 @@ This is [the link](https://teams.cloud.microsoft/l/channel/19%3AtP-9nxkuQ1emSLMR
 
 ### Meeting schedule
 
--   Meeting 1
-    -   19 Sept 2026/18:20-18:45/Online on Teams
+-   Meeting 1 (19 Sept 2026/18:20-18:45/Online on Teams)
     -   Allocate Tasks 1 to 4 to everyone
     -   Plan out the estimated deadline for each task
     -   Decide which platform to share our Quarto files to
     -   Plan out when to have our next meeting
--   Meeting 2
-    -   1 Oct 2026/15:00-15:45/Learning & Teaching Building
+-   Meeting 2 (1 Oct 2026/15:00-15:45/Learning & Teaching Building)
     -   Go through important findings in Tasks 1 and 2
     -   Decide the better option to finalise our PDF submission
     -   Update contribution summary in Appendix
--   Meeting 3
-    -   16 Oct 2026/17:00-17:20/Online on Teams
+-   Meeting 3 (16 Oct 2026/17:00-17:20/Online on Teams)
     -   Discuss findings from Task 3 + Task 4 a & b
     -   Decide on the deadlines for each subtask in Task 4
     -   Plan out when to fill out everything on the appendix
+-   Meeting 4 (22 Oct 2026/15:00- /Learning & Teaching Building)
 
 ### Contribution summary
 
 | Member name | Specific tasks performed | Hours contributed (approx.) |
-|------------------|--------------------------|----------------------------|
-| Arella |  |  |
-| Christy |  |  |
-| Caryn | Built a violin plot overlaid with a box plot comparing the full budget distributions of Franchise vs. Original films; implemented bootstrap to estimate the sampling distribution of the difference in median budget between two groups; calculated aggregated share of total budget & total revenue, per-film median revenue & median ROI by group |  |
+|------------------------|------------------------|------------------------|
+| Arella | **Task 3**: Cleaned the data such are removing N/As, filtering variables, etc. Used `fitdistr()` to fit various models to the movies data and used diagnostic tests and visualisation (Q-Q plots and AIC) to assess which model is the best fit for the data. Coded the bootstrapping simulation and displaying the confidence interval results as well as interpreting those results. | 2-3 |
+|  | **Task 4ab**: Cleaning the data, created the 'flop', checking variables before transforming them to fit the logistic regression (log-transform, factoring). The time used was mostly for exploring the genre column as it had an unnamed genre that was automatically used as the reference predictor which produced abnormal coefficients and confidence intervals (fixed by picking "Action" as the reference genre). Coded the frequentist logistic regression and the Bayesian logistic regression. Interpreting the output and the posterior probability statement. | 2.5-3 |
+| Christy | **Task 1**: Wrote the code to clean the financial data, generate summary tables and visualisations of production budgets, ROI and franchise status, and analysed changes in the film slate over time. Wrote up the interpretation of the results, including data quality issues, genre differences, financial trends and franchise composition, and how these findings can inform production decisions. | 3 |
+|  | **Task 4c**: Wrote the code to generate confusion matrices and calculate accuracy, sensitivity, specificity and precision for both models at a threshold of 0.35. Wrote up the comparison of classification performance and justified the threshold based on the proportion of flops in the data set. | 2 |
+| Caryn | **Task 2**: Developed a violin plot overlaid with a boxplot to compare the full budget distributions of Franchise & Original films. Implemented bootstrap resampling to construct a 95% CI for the difference in median budgets. Calculated each group's share of total production budget & revenue, alongside median revenue & ROI. Interpreted the findings and formulated investment recommendations. | 3 |
+|  | **Task 4d**: Constructed hypothetical Original & Franchise Action pitches with identical budgets and cast sizes. Used Bayesian logistic regression to estimate flop probabilities, 95% credible intervals, posterior risk differences, & greenlight recommendations. | 2.5 |
+
+: {tbl-colwidths="\[15,70,15\]"}
 
 ### Cross-review table
 
-| Task   | Reviewed by (name of primary Reviewer) | Key feedback provided |
-|--------|----------------------------------------|-----------------------|
-| Task 1 |                                        |                       |
-| Task 2 |                                        |                       |
-| Task 3 |                                        |                       |
-| Task 4 |                                        |                       |
+| Task | Reviewed by (name of primary Reviewer) | Key feedback provided |
+|------------------|-----------------------------------|-------------------|
+| Task 1 | Caryn | Recommended showcasing the `franchise_overall` plot alongside the `budget_overall` & `roi_overall` plots side-by-side, strengthening written discussions by including statistics, and adding captions to figures and tables. |
+| Task 2 |  |  |
+| Task 3 | Caryn | Provided feedback on handling invalid records & data filtering, and adding captions to figures and tables. |
+| Task 4 | Caryn | Suggested creating a training & test data set. |
 
-## Task 1
+: {tbl-colwidths="\[15,20,65\]"}
+
+```{r}
+#| label: setup
+#| echo: false 
+#| eval: true
+
+# Set up chunk for all slides
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.height = 3,
+  fig.align = "center",
+  out.width = "80%"
+)
+
+options(
+  digits = 2,
+  width = 80,
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis",
+  ggplot2.discrete.colour = c("#D55E00", "#0072B2", "#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#F0E442"),
+  ggplot2.discrete.fill = c("#D55E00", "#0072B2", "#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#F0E442")
+)
+
+library(tidyverse)
+library(gt)
+library(patchwork) 
+library(kableExtra)
+
+movies <- read_csv("movies.csv")
+# preserve the historical cutoff in the brief (through December 2016)
+# budgets below $10,000 and revenues of 0 are missing-data placeholders
+movies_clean <- movies %>%
+  filter(!is.na(release_year), release_year <= 2016,
+         franchise_status %in% c("Franchise", "Original")) %>%
+  mutate(franchise_status = factor(franchise_status, 
+                                   levels = c("Franchise", "Original")),
+         budget_clean = if_else(!is.na(budget) & budget >= 10000,
+                                as.numeric(budget), NA_real_),
+         revenue_clean = if_else(!is.na(revenue) & revenue > 0,
+                                 as.numeric(revenue), NA_real_),
+         roi_clean = revenue_clean / budget_clean,
+         budget_m = budget_clean / 1e6)
+
+# all film budgets available for parts (a) and (b)
+budget_data <- movies_clean %>% filter(!is.na(budget_clean))
+
+# only films with BOTH valid budget & revenue for financial comparison
+complete_financial <- movies_clean %>%
+  filter(!is.na(budget_clean), !is.na(revenue_clean))
+
+quality_summary <- movies_clean %>%
+  group_by(franchise_status) %>%
+  summarise(all_films = n(),
+            valid_budgets = sum(!is.na(budget_clean)),
+            complete_financial = sum(!is.na(budget_clean) & !is.na(revenue_clean)),
+            complete_pct = 100 * complete_financial / all_films,
+            .groups = "drop")
+```
+
+### Acknowledgement of AI Use
+
+- Arella:
+- Christy:
+- Caryn: ChatGPT was used to assist with formatting and improving the presentation of plots, figures, and tables in the rendered PDF - this includes figure dimensions, arranging subplots, axis labels, table widths, and layout adjustments. It also helped me with R code troubleshooting, statistical analysis suggestions, and refining written discussions. All suggestions made by AI were meticulously reviewed and adapted during the preparation of the report. 
+
+## Task 1 - Slate Health Check
+
+
+## Task 2 - Franchise vs. Original: Investment Strategy
+
+### (a) Comparing the full budget distributions
+
+Films with reported budgets below \$10,000 were treated as missing, and releases after 2016 were excluded. Both groups have right-skewed budget distributions, so the comparison uses a logarithmic scale. The plots describe all films with valid budgets, irrespective of revenue availability.
+
+```{r}
+#| label: budget-summary
+#| include: false
+
+budget_summary <- budget_data %>%
+  group_by(franchise_status) %>%
+  summarise(n_films = n(),
+            minimum_m = min(budget_m),
+            q1_m = as.numeric(quantile(budget_m, 0.25)),
+            median_m = median(budget_m),
+            q3_m = as.numeric(quantile(budget_m, 0.75)),
+            iqr_m = IQR(budget_m),
+            maximum_m = max(budget_m),
+            .groups = "drop")
+
+budget_summary %>%
+  gt() %>%
+  fmt_number(columns = c(minimum_m, q1_m, median_m, q3_m,
+                         iqr_m, maximum_m), decimals = 2) %>%
+  cols_label(franchise_status = "Status", n_films = "Valid budgets (n)",
+             minimum_m = "Min", q1_m = "Q1", median_m = "Median",
+             q3_m = "Q3", iqr_m = "IQR", maximum_m = "Max") %>%
+  tab_header(title = "Production budgets (US$ millions)")
+```
+
+```{r}
+#| label: budget-violin-plot
+#| fig-cap: "Production budgets for Franchise & Original films. Both the violin and boxplot use a logarithmic budget axis."
+#| fig-width: 6
+#| fig-height: 2.8
+#| out-width: "75%"
+
+budget_dist_plot <- budget_data %>%
+  ggplot(aes(x = franchise_status, y = budget_m)) +
+  geom_violin(trim = TRUE, alpha = 0.55) +
+  geom_boxplot(width = 0.15, outlier.shape = NA, fill = "white", alpha = 0.9) +
+  scale_y_log10(
+    breaks = c(0.01, 0.1, 1, 10, 100, 500),
+    labels = c("$0.01M", "$0.1M", "$1M", "$10M", "$100M", "$500M")) +
+  labs(x = NULL, y = "Budget (US$ millions, log-scaled)") +
+  theme_minimal(base_size = 9) +
+  theme(plot.margin = margin(3, 5, 2, 5))
+
+budget_dist_plot
+```
+
+```{r}
+#| label: budget-comparison-numbers
+#| include: false
+
+franchise_budget <- budget_data %>%
+  filter(franchise_status == "Franchise") %>% pull(budget_clean)
+original_budget <- budget_data %>%
+  filter(franchise_status == "Original") %>% pull(budget_clean)
+
+franchise_median_m <- median(franchise_budget) / 1e6
+original_median_m <- median(original_budget) / 1e6
+
+# % of Original films whose budgets meet / exceed the Franchise median
+original_above_franchise_pct <- 100 *
+  mean(original_budget >= median(franchise_budget))
+```
+
+Franchise films had a median budget of \$`r sprintf("%.0f", franchise_median_m)` million, compared with \$`r sprintf("%.0f", original_median_m)` million for Original films. The distributions are right-skewed and overlapping, where **`r sprintf("%.1f", original_above_franchise_pct)`%** of Original films with valid budgets had budgets at least as large as the Franchise median. Therefore, Franchise films usually receive larger budgets, but Original productions are not exclusively low-budget films. The Franchise group is also much smaller, so the plot compares each group's distribution rather than its contribution to the overall number of films.
+
+Franchise classification was inferred from titles and keyword tags and may incorrectly label some sequels as Original. Such errors could influence the comparison, and this would mean the true gap between Original and Franchise budgets may be slightly understated here.
+
+### (b) 95% confidence interval for the difference in median budget
+
+We estimated the Franchise minus Original median difference using a **non-parametric percentile bootstrap**. The two groups were independently resampled with replacement whilst retaining their original sample sizes. For 5000 resamples, the 2.5th and 97.5th percentiles of the median differences formed a 95% confidence interval.
+
+```{r}
+#| label: median-bootstrap
+#| include: false
+
+observed_diff_m <- (median(franchise_budget) - median(original_budget)) / 1e6
+
+set.seed(5242)
+bootstrap_results <- tibble(replicate = 1:5000) %>%
+  mutate(boot_diff_m = map_dbl(replicate, function(i) {
+    franchise_boot <- sample(franchise_budget,
+                             size = length(franchise_budget),
+                             replace = TRUE)
+    original_boot <- sample(original_budget,
+                            size = length(original_budget),
+                            replace = TRUE)
+    (median(franchise_boot) - median(original_boot)) / 1e6
+  }))
+
+bootstrap_ci <- quantile(bootstrap_results$boot_diff_m,
+                         probs = c(0.025, 0.975), names = FALSE)
+ci_lower <- bootstrap_ci[1]
+ci_upper <- bootstrap_ci[2]
+
+tibble(`Observed median difference (US$M)` = observed_diff_m,
+       `95% CI lower (US$M)` = ci_lower,
+       `95% CI upper (US$M)` = ci_upper) %>%
+  gt() %>%
+  fmt_number(columns = everything(), decimals = 2)
+```
+
+```{r}
+#| label: bootstrap-interval-plot
+#| fig-cap: "Bootstrap distribution of the Franchise minus Original difference in medians. Dashed line: observed difference. Solid lines: 95% percentile confidence limits."
+#| fig-width: 6
+#| fig-height: 2.8
+#| out-width: "75%"
+
+ggplot(bootstrap_results, aes(x = boot_diff_m)) +
+  geom_histogram(bins = 35, fill = "grey", colour = "white") +
+  geom_vline(xintercept = observed_diff_m,
+             linetype = "dashed", linewidth = 0.9) +
+  geom_vline(xintercept = c(ci_lower, ci_upper), linewidth = 0.8) +
+  labs(title = "Bootstrap Interval for the Median Budget Difference",
+       x = "Franchise minus Original median budget (US$ millions)",
+       y = "Number of bootstrap resamples") +
+  theme_minimal()
+```
+
+The observed difference was **\$`r sprintf("%.1f", observed_diff_m)` million**, with a **95% bootstrap confidence interval of** $`r sprintf("%.1f", ci_lower)`-$`r sprintf("%.1f", ci_upper)` million. Since the interval lies above 0, there is evidence that Franchise films have higher median production budgets in the sampled population. The interval assumes reasonably representative and independent observations within each group, and does not account for errors in franchise classification or missing budgets.
+
+### (c) Do the results support leadership's concerns?
+
+To investigate budget and revenue shares fairly, the following table uses **only films with both valid budgets and revenue**. Revenue and ROI medians are calculated on that same complete-financial-record sample.
+
+```{r}
+#| label: finance-comparison
+
+financial_summary <- complete_financial %>%
+  group_by(franchise_status) %>%
+  summarise(n_films = n(),
+            total_budget = sum(budget_clean),
+            total_revenue = sum(revenue_clean),
+            median_revenue_m = median(revenue_clean) / 1e6,
+            median_roi = median(roi_clean),
+            .groups = "drop") %>%
+  mutate(share_films = 100 * n_films / sum(n_films),
+         share_budget = 100 * total_budget / sum(total_budget),
+         share_revenue = 100 * total_revenue / sum(total_revenue))
+
+financial_summary %>%
+  transmute(Group = franchise_status, n = n_films,
+            `Films (%)` = round(share_films, 1),
+            `Budget (%)` = round(share_budget, 1),
+            `Revenue (%)` = round(share_revenue, 1),
+            `Median ROI` = round(median_roi, 2)) %>%
+  knitr::kable(booktabs = TRUE, 
+               caption = "Financial comparison by franchise status")
+```
+
+```{r}
+#| label: missingness-comparison
+#| include: false
+
+quality_summary %>%
+  gt() %>%
+  fmt_number(columns = complete_pct, decimals = 1) %>%
+  cols_label(franchise_status = "Status", all_films = "All films",
+             valid_budgets = "Valid budgets",
+             complete_financial = "Complete financial records",
+             complete_pct = "Complete (%)")
+```
+
+The first part of leadership's concern is **partly supported**: Franchise films typically have larger budgets (median \$`r sprintf("%.0f", franchise_median_m)` million versus \$`r sprintf("%.0f", original_median_m)` million), but the significant distributional overlap means Original films should not all be treated as small projects.
+
+The second part is **not supported as stated**. Among the `r sum(financial_summary$n_films)` films with complete financial data, Franchise films accounted for **`r sprintf("%.1f", financial_summary$share_revenue[financial_summary$franchise_status == "Franchise"])`%** of total reported box-office revenue, while Original films accounted for **`r sprintf("%.1f", financial_summary$share_revenue[financial_summary$franchise_status == "Original"])`%**. Thus Franchise films did not generate most of the sample's total revenue. Their median revenue and median revenue-to-budget ratio were nevertheless higher on a per-film basis. The higher aggregate share of Original revenue mainly reflects their much greater number of films, not demonstrated superiority of an additional Original investment.
+
+Complete budget and revenue were available for **`r sprintf("%.1f", quality_summary$complete_pct[quality_summary$franchise_status == "Franchise"])`%** of Franchise films but only **`r sprintf("%.1f", quality_summary$complete_pct[quality_summary$franchise_status == "Original"])`%** of Original films. Reporting may be incomplete, and franchise classifications may contain errors. Moreover, the data set covers many studios, and revenue divided by production budget is not net studio profitability as it excludes marketing, distribution and cinema revenue shares. These descriptive associations should not be treated as causal effects of franchise status.
+
+### (d) Recommendations for Meridian's next decade
+
+1.  **Expand Original projects selectively across budget levels.** The historical Original slate includes substantial low-, medium-, and high-budget investment. Meridian can pursue creative diversity by testing more Original projects in stages, using realistic budgets and monitoring performance rather than assuming that more Original films will automatically generate more profit.
+
+2.  **Maintain a selective Franchise portfolio.** Franchise films had higher median budgets and reported per-film box-office returns in this sample. A smaller group of carefully selected Franchise projects may complement the Original slate, but each proposal is still not a guaranteed causal franchise advantage.
+
+3.  **Make greenlight decisions project-by-project.** Evaluate genre, production scale, expected audience, downside scenarios, and the full costs of release. Do not automatically equate Original with low-budget or Franchise with high-return. Recheck this allocation regularly, and consider errors in the franchise labels and incomplete financial reporting.
+
+## Task 3
+
+## Task 4
